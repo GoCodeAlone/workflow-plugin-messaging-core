@@ -5,6 +5,7 @@
   "description": "Shared messaging interfaces and step contracts for workflow platform messaging plugins (Discord, Slack, Teams).",
   "license": "MIT",
   "repository": "https://github.com/GoCodeAlone/workflow-plugin-messaging-core",
+  "type": "builtin",
   "tier": "community",
   "tags": ["messaging", "chat", "notifications", "discord", "slack", "teams"],
   "minEngineVersion": "0.3.56",
