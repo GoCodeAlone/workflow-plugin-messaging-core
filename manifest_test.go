@@ -61,9 +61,13 @@ func TestPluginManifest(t *testing.T) {
 		if s.Description == "" {
 			t.Errorf("stepSchema %q has empty description", s.Type)
 		}
+		// All messaging step types must have at least one config field (e.g. channel)
+		// because they all require a destination or context to operate on.
 		if len(s.ConfigFields) == 0 {
 			t.Errorf("stepSchema %q has no configFields", s.Type)
 		}
+		// All messaging step types produce at least one output (e.g. message_id, sent,
+		// reacted) to allow downstream steps to react to the result.
 		if len(s.Outputs) == 0 {
 			t.Errorf("stepSchema %q has no outputs", s.Type)
 		}
