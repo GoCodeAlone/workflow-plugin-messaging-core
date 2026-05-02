@@ -103,13 +103,30 @@ func TestPluginManifest_StrictCoverage(t *testing.T) {
 		t.Fatalf("parse plugin.json: %v", err)
 	}
 
+	if err := m.Validate(); err != nil {
+		t.Fatalf("plugin.json validation failed: %v", err)
+	}
+
 	total := len(m.StepTypes)
 	if total == 0 {
 		t.Fatal("no step types declared in plugin.json")
 	}
 
-	strict := len(m.StepSchemas)
-	if strict != total {
-		t.Errorf("strict contract coverage: %d/%d step types have schemas (want 100%%)", strict, total)
+	// Build a set of schema types to compute the intersection with declared step types.
+	schemaSet := make(map[string]bool, len(m.StepSchemas))
+	for _, s := range m.StepSchemas {
+		schemaSet[s.Type] = true
+	}
+
+	// Count how many declared step types have a corresponding schema.
+	covered := 0
+	for _, st := range m.StepTypes {
+		if schemaSet[st] {
+			covered++
+		}
+	}
+
+	if covered != total {
+		t.Errorf("strict contract coverage: %d/%d step types have schemas (want 100%%)", covered, total)
 	}
 }

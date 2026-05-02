@@ -155,6 +155,11 @@
           "key": "content",
           "type": "string",
           "description": "Text content of the message."
+        },
+        {
+          "key": "message_id",
+          "type": "string",
+          "description": "ID of the received message. Passed to react/reply steps downstream."
         }
       ]
     },
