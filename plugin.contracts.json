@@ -1,0 +1,33 @@
+{
+  "version": "1",
+  "contracts": [
+    {
+      "kind": "step",
+      "type": "step.messaging_send",
+      "mode": "strict",
+      "input": "workflow.plugins.messaging.v1.MessagingSendInput",
+      "output": "workflow.plugins.messaging.v1.MessagingSendOutput"
+    },
+    {
+      "kind": "step",
+      "type": "step.messaging_reply",
+      "mode": "strict",
+      "input": "workflow.plugins.messaging.v1.MessagingReplyInput",
+      "output": "workflow.plugins.messaging.v1.MessagingReplyOutput"
+    },
+    {
+      "kind": "step",
+      "type": "step.messaging_receive",
+      "mode": "strict",
+      "input": "workflow.plugins.messaging.v1.MessagingReceiveInput",
+      "output": "workflow.plugins.messaging.v1.MessagingReceiveOutput"
+    },
+    {
+      "kind": "step",
+      "type": "step.messaging_react",
+      "mode": "strict",
+      "input": "workflow.plugins.messaging.v1.MessagingReactInput",
+      "output": "workflow.plugins.messaging.v1.MessagingReactOutput"
+    }
+  ]
+}
