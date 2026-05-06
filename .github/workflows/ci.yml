@@ -6,7 +6,7 @@ on:
     branches: [main, master]
 jobs:
   test:
-    runs-on: [self-hosted, Linux, X64]
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-go@v6
@@ -14,3 +14,21 @@ jobs:
           go-version-file: go.mod
       - run: go build ./...
       - run: go test ./... -v -race -count=1
+
+  validate-plugin-manifest:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Install wfctl
+        run: |
+          wfctl_version="$(go list -m -f '{{.Version}}' github.com/GoCodeAlone/workflow)"
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+          go install "github.com/GoCodeAlone/workflow/cmd/wfctl@${wfctl_version}"
+      - name: Validate plugin manifest
+        run: wfctl plugin validate -file plugin.json

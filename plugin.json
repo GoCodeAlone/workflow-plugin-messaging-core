@@ -1,0 +1,214 @@
+{
+  "name": "messaging-core",
+  "version": "0.1.0",
+  "author": "GoCodeAlone",
+  "description": "Shared messaging interfaces and step contracts for workflow platform messaging plugins (Discord, Slack, Teams).",
+  "license": "MIT",
+  "repository": "https://github.com/GoCodeAlone/workflow-plugin-messaging-core",
+  "type": "builtin",
+  "tier": "community",
+  "tags": ["messaging", "chat", "notifications", "discord", "slack", "teams"],
+  "minEngineVersion": "0.3.56",
+  "stepTypes": [
+    "step.messaging_send",
+    "step.messaging_reply",
+    "step.messaging_receive",
+    "step.messaging_react"
+  ],
+  "stepSchemas": [
+    {
+      "type": "step.messaging_send",
+      "plugin": "messaging-core",
+      "description": "Sends a message to a platform channel. Implemented by each platform plugin (Discord, Slack, Teams).",
+      "configFields": [
+        {
+          "key": "channel",
+          "label": "Channel",
+          "type": "string",
+          "description": "Target channel ID or name to send the message to.",
+          "required": true,
+          "placeholder": "general"
+        },
+        {
+          "key": "text",
+          "label": "Message Text",
+          "type": "string",
+          "description": "Message body content. Template expressions are supported.",
+          "required": true,
+          "placeholder": "Hello, world!"
+        },
+        {
+          "key": "provider",
+          "label": "Provider",
+          "type": "select",
+          "description": "Messaging platform provider to use.",
+          "required": false,
+          "options": ["discord", "slack", "teams"],
+          "placeholder": "discord"
+        }
+      ],
+      "outputs": [
+        {
+          "key": "message_id",
+          "type": "string",
+          "description": "Unique identifier of the sent message."
+        },
+        {
+          "key": "sent",
+          "type": "boolean",
+          "description": "True when the message was sent successfully."
+        }
+      ]
+    },
+    {
+      "type": "step.messaging_reply",
+      "plugin": "messaging-core",
+      "description": "Sends a threaded reply to an existing message. Implemented by each platform plugin (Discord, Slack, Teams).",
+      "configFields": [
+        {
+          "key": "channel",
+          "label": "Channel",
+          "type": "string",
+          "description": "Channel ID or name that contains the parent message.",
+          "required": true,
+          "placeholder": "support"
+        },
+        {
+          "key": "parent_id",
+          "label": "Parent Message ID",
+          "type": "string",
+          "description": "ID of the message to reply to.",
+          "required": true,
+          "placeholder": "msg-123"
+        },
+        {
+          "key": "text",
+          "label": "Reply Text",
+          "type": "string",
+          "description": "Reply body content. Template expressions are supported.",
+          "required": true,
+          "placeholder": "Thanks for your message!"
+        },
+        {
+          "key": "provider",
+          "label": "Provider",
+          "type": "select",
+          "description": "Messaging platform provider to use.",
+          "required": false,
+          "options": ["discord", "slack", "teams"],
+          "placeholder": "discord"
+        }
+      ],
+      "outputs": [
+        {
+          "key": "message_id",
+          "type": "string",
+          "description": "Unique identifier of the reply message."
+        },
+        {
+          "key": "sent",
+          "type": "boolean",
+          "description": "True when the reply was sent successfully."
+        }
+      ]
+    },
+    {
+      "type": "step.messaging_receive",
+      "plugin": "messaging-core",
+      "description": "Reads the latest message event from a channel. Typically used after a messaging trigger to extract event details.",
+      "configFields": [
+        {
+          "key": "channel",
+          "label": "Channel",
+          "type": "string",
+          "description": "Channel ID or name to receive the message event from.",
+          "required": true,
+          "placeholder": "general"
+        },
+        {
+          "key": "provider",
+          "label": "Provider",
+          "type": "select",
+          "description": "Messaging platform provider to use.",
+          "required": false,
+          "options": ["discord", "slack", "teams"],
+          "placeholder": "discord"
+        }
+      ],
+      "outputs": [
+        {
+          "key": "event_type",
+          "type": "string",
+          "description": "Platform event type (e.g. message_create, message_update, reaction_add)."
+        },
+        {
+          "key": "channel_id",
+          "type": "string",
+          "description": "ID of the channel the event occurred in."
+        },
+        {
+          "key": "user_id",
+          "type": "string",
+          "description": "ID of the user who triggered the event."
+        },
+        {
+          "key": "content",
+          "type": "string",
+          "description": "Text content of the message."
+        },
+        {
+          "key": "message_id",
+          "type": "string",
+          "description": "ID of the received message. Passed to react/reply steps downstream."
+        }
+      ]
+    },
+    {
+      "type": "step.messaging_react",
+      "plugin": "messaging-core",
+      "description": "Adds an emoji reaction to a message. Implemented by each platform plugin (Discord, Slack, Teams).",
+      "configFields": [
+        {
+          "key": "channel",
+          "label": "Channel",
+          "type": "string",
+          "description": "Channel ID or name containing the target message.",
+          "required": true,
+          "placeholder": "general"
+        },
+        {
+          "key": "message_id",
+          "label": "Message ID",
+          "type": "string",
+          "description": "ID of the message to react to.",
+          "required": true,
+          "placeholder": "msg-123"
+        },
+        {
+          "key": "emoji",
+          "label": "Emoji",
+          "type": "string",
+          "description": "Emoji to add as a reaction (Unicode or platform-specific name).",
+          "required": true,
+          "placeholder": "👍"
+        },
+        {
+          "key": "provider",
+          "label": "Provider",
+          "type": "select",
+          "description": "Messaging platform provider to use.",
+          "required": false,
+          "options": ["discord", "slack", "teams"],
+          "placeholder": "discord"
+        }
+      ],
+      "outputs": [
+        {
+          "key": "reacted",
+          "type": "boolean",
+          "description": "True when the reaction was added successfully."
+        }
+      ]
+    }
+  ]
+}
