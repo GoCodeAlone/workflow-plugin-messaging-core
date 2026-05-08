@@ -3,3 +3,6 @@ builds:
   - skip: true
 changelog:
   sort: asc
+
+release:
+  draft: true
