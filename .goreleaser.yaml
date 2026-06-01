@@ -1,6 +1,34 @@
 version: 2
+project_name: workflow-plugin-messaging-core
+
+before:
+  hooks:
+    - go mod tidy
+    - "sed -i.bak 's/\"version\": \".*\"/\"version\": \"{{ .Version }}\"/' plugin.json && rm -f plugin.json.bak"
+
 builds:
-  - skip: true
+  - id: workflow-plugin-messaging-core
+    main: ./cmd/workflow-plugin-messaging-core
+    binary: workflow-plugin-messaging-core
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w -X main.Version={{.Version}}
+
+archives:
+  - formats: [tar.gz]
+    name_template: "{{ .ProjectName }}-{{ .Os }}-{{ .Arch }}"
+    files:
+      - plugin.json
+      - plugin.contracts.json
+      - LICENSE
+
 changelog:
   sort: asc
 
