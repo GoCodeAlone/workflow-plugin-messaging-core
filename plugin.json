@@ -1,6 +1,6 @@
 {
     "name": "messaging-core",
-    "version": "0.1.1",
+    "version": "0.0.0",
     "author": "GoCodeAlone",
     "description": "Shared messaging interfaces and step contracts for workflow platform messaging plugins (Discord, Slack, Teams).",
     "license": "MIT",
@@ -16,12 +16,17 @@
         "teams"
     ],
     "minEngineVersion": "0.51.7",
-    "stepTypes": [
-        "step.messaging_send",
-        "step.messaging_reply",
-        "step.messaging_receive",
-        "step.messaging_react"
-    ],
+    "capabilities": {
+        "configProvider": false,
+        "moduleTypes": [],
+        "stepTypes": [
+            "step.messaging_send",
+            "step.messaging_reply",
+            "step.messaging_receive",
+            "step.messaging_react"
+        ],
+        "triggerTypes": []
+    },
     "stepSchemas": [
         {
             "type": "step.messaging_send",
