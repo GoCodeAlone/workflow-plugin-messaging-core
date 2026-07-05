@@ -121,36 +121,3 @@ func ProjectNotificationEventToMessagingSend(event NotificationEvent, channel st
 		Text:    text,
 	}, nil
 }
-
-// Deprecated: use RequiredConfigChannel.
-const RatchetRequiredConfigChannel = RequiredConfigChannel
-
-// Deprecated: use NotificationEvent.
-type RatchetNotificationEvent = NotificationEvent
-
-// Deprecated: use NotificationMessaging.
-type RatchetMessagingRecord = NotificationMessaging
-
-// Deprecated: use NotificationWorkflow.
-type RatchetWorkflowProjection = NotificationWorkflow
-
-// Deprecated: use NotificationWorkflowInput.
-type RatchetWorkflowInput = NotificationWorkflowInput
-
-// Deprecated: use NotificationWorkflowSource.
-type RatchetWorkflowSourceMeta = NotificationWorkflowSource
-
-// Deprecated: use ParseNotificationEvent.
-func ParseRatchetNotificationEvent(data []byte) (RatchetNotificationEvent, error) {
-	return ParseNotificationEvent(data)
-}
-
-// Deprecated: use ParseNotificationEvents.
-func ParseRatchetNotificationEvents(r io.Reader) ([]RatchetNotificationEvent, error) {
-	return ParseNotificationEvents(r)
-}
-
-// Deprecated: use ProjectNotificationEventToMessagingSend.
-func ProjectRatchetNotificationToMessagingSend(event RatchetNotificationEvent, channel string) (MessagingSendInput, error) {
-	return ProjectNotificationEventToMessagingSend(event, channel)
-}

@@ -22,9 +22,8 @@ Use `ParseNotificationEvents` to parse a JSON array or JSONL stream and
 target `channel`; provider-specific plugins such as Slack, Discord, or Teams
 own credentials, rate limits, redaction, retries, and delivery.
 
-Ratchet blackboard export is one producer of this shape. Deprecated
-ratchet-prefixed aliases remain for compatibility, but new callers should use
-the generic notification-event API.
+Ratchet blackboard export is one producer of this shape, but the API remains
+provider-neutral so other tools can emit the same notification-event records.
 
 ## License
 

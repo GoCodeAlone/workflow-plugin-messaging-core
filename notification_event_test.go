@@ -117,29 +117,3 @@ func TestProjectNotificationRejectsMissingText(t *testing.T) {
 		t.Fatal("expected missing messaging text error")
 	}
 }
-
-func TestDeprecatedRatchetNotificationWrappers(t *testing.T) {
-	event, err := ParseRatchetNotificationEvent([]byte(`{"section":"coordination","key":"status","messaging":{"text":"ready"}}`))
-	if err != nil {
-		t.Fatalf("parse event: %v", err)
-	}
-	if event.Messaging.Text != "ready" {
-		t.Fatalf("event = %#v", event)
-	}
-
-	events, err := ParseRatchetNotificationEvents(strings.NewReader(`{"section":"coordination","key":"status","messaging":{"text":"ready"}}`))
-	if err != nil {
-		t.Fatalf("parse events: %v", err)
-	}
-	if len(events) != 1 {
-		t.Fatalf("len(events) = %d", len(events))
-	}
-
-	input, err := ProjectRatchetNotificationToMessagingSend(event, "ops")
-	if err != nil {
-		t.Fatalf("project event: %v", err)
-	}
-	if input.Channel != "ops" || input.Text != "ready" {
-		t.Fatalf("input = %#v", input)
-	}
-}
