@@ -57,13 +57,18 @@ jobs:
             const { owner, repo } = context.repo;
             let release;
             for (let attempt = 0; attempt < 12; attempt++) {
-              const { data: releases } = await github.rest.repos.listReleases({ owner, repo, per_page: 100 });
-              release = releases.find(r => r.tag_name === tag);
-              if (release) break;
+              for (let page = 1; page <= 5; page++) {
+                const { data: releases } = await github.rest.repos.listReleases({ owner, repo, per_page: 100, page });
+                release = releases.find(r => r.tag_name === tag);
+                if (release || releases.length < 100) break;
+              }
+              if (release) {
+                break;
+              }
               await new Promise(resolve => setTimeout(resolve, 5000));
             }
             if (!release) {
-              throw new Error(`draft release for tag ${tag} not found in repo listing (latest 100 releases)`);
+              throw new Error(`draft release for tag ${tag} not found in latest 500 repository releases`);
             }
             if (release.draft) {
               await github.rest.repos.updateRelease({
