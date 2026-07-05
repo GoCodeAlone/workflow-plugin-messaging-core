@@ -101,8 +101,14 @@ func ParseRatchetNotificationEvents(r io.Reader) ([]RatchetNotificationEvent, er
 }
 
 func ProjectRatchetNotificationToMessagingSend(event RatchetNotificationEvent, channel string) (MessagingSendInput, error) {
+	channel = strings.TrimSpace(channel)
+	if channel == "" {
+		return MessagingSendInput{}, fmt.Errorf("messaging send channel is required")
+	}
 	text := strings.TrimSpace(event.Messaging.Text)
-	if event.Workflow != nil && event.Workflow.StepType == StepTypeMessagingSend {
+	if event.Workflow != nil &&
+		event.Workflow.StepType == StepTypeMessagingSend &&
+		event.Workflow.PluginFamily == PluginFamilyMessagingCore {
 		if workflowText := strings.TrimSpace(event.Workflow.Input.Text); workflowText != "" {
 			text = workflowText
 		}
@@ -111,7 +117,7 @@ func ProjectRatchetNotificationToMessagingSend(event RatchetNotificationEvent, c
 		return MessagingSendInput{}, fmt.Errorf("ratchet notification-event missing messaging.text")
 	}
 	return MessagingSendInput{
-		Channel: strings.TrimSpace(channel),
+		Channel: channel,
 		Text:    text,
 	}, nil
 }

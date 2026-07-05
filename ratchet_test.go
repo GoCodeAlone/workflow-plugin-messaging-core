@@ -86,6 +86,31 @@ func TestProjectRatchetNotificationUsesWorkflowProjection(t *testing.T) {
 	}
 }
 
+func TestProjectRatchetNotificationRejectsMissingChannel(t *testing.T) {
+	event := RatchetNotificationEvent{Messaging: RatchetMessagingRecord{Text: "ready"}}
+	if _, err := ProjectRatchetNotificationToMessagingSend(event, " "); err == nil {
+		t.Fatal("expected missing channel error")
+	}
+}
+
+func TestProjectRatchetNotificationIgnoresForeignWorkflowProjection(t *testing.T) {
+	event := RatchetNotificationEvent{
+		Messaging: RatchetMessagingRecord{Text: "fallback"},
+		Workflow: &RatchetWorkflowProjection{
+			StepType:     StepTypeMessagingSend,
+			PluginFamily: "other-plugin",
+			Input:        RatchetWorkflowInput{Text: "foreign text"},
+		},
+	}
+	input, err := ProjectRatchetNotificationToMessagingSend(event, "ops")
+	if err != nil {
+		t.Fatalf("project event: %v", err)
+	}
+	if input.Text != "fallback" {
+		t.Fatalf("input = %#v", input)
+	}
+}
+
 func TestProjectRatchetNotificationRejectsMissingText(t *testing.T) {
 	_, err := ProjectRatchetNotificationToMessagingSend(RatchetNotificationEvent{}, "ops")
 	if err == nil {
