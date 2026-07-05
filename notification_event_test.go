@@ -5,8 +5,8 @@ import (
 	"testing"
 )
 
-func TestParseRatchetNotificationEventProjectsMessagingSend(t *testing.T) {
-	event, err := ParseRatchetNotificationEvent([]byte(`{
+func TestParseNotificationEventProjectsMessagingSend(t *testing.T) {
+	event, err := ParseNotificationEvent([]byte(`{
 		"section":"coordination",
 		"key":"status",
 		"value":"ready",
@@ -22,7 +22,7 @@ func TestParseRatchetNotificationEventProjectsMessagingSend(t *testing.T) {
 		t.Fatalf("event = %#v", event)
 	}
 
-	input, err := ProjectRatchetNotificationToMessagingSend(event, "ops")
+	input, err := ProjectNotificationEventToMessagingSend(event, "ops")
 	if err != nil {
 		t.Fatalf("project event: %v", err)
 	}
@@ -31,8 +31,8 @@ func TestParseRatchetNotificationEventProjectsMessagingSend(t *testing.T) {
 	}
 }
 
-func TestParseRatchetNotificationEventsJSONL(t *testing.T) {
-	events, err := ParseRatchetNotificationEvents(strings.NewReader(`
+func TestParseNotificationEventsJSONL(t *testing.T) {
+	events, err := ParseNotificationEvents(strings.NewReader(`
 {"section":"coordination","key":"status","messaging":{"text":"[coordination/status] ready"}}
 
 {"section":"release","key":"gate","messaging":{"text":"[release/gate] green"}}
@@ -48,8 +48,8 @@ func TestParseRatchetNotificationEventsJSONL(t *testing.T) {
 	}
 }
 
-func TestParseRatchetNotificationEventsJSONArray(t *testing.T) {
-	events, err := ParseRatchetNotificationEvents(strings.NewReader(`[
+func TestParseNotificationEventsJSONArray(t *testing.T) {
+	events, err := ParseNotificationEvents(strings.NewReader(`[
 		{"section":"coordination","key":"status","messaging":{"text":"[coordination/status] ready"}},
 		{"section":"release","key":"gate","messaging":{"text":"[release/gate] green"}}
 	]`))
@@ -61,8 +61,8 @@ func TestParseRatchetNotificationEventsJSONArray(t *testing.T) {
 	}
 }
 
-func TestProjectRatchetNotificationUsesWorkflowProjection(t *testing.T) {
-	event, err := ParseRatchetNotificationEvent([]byte(`{
+func TestProjectNotificationUsesWorkflowProjection(t *testing.T) {
+	event, err := ParseNotificationEvent([]byte(`{
 		"section":"coordination",
 		"key":"handoff",
 		"messaging":{"text":"fallback"},
@@ -77,7 +77,7 @@ func TestProjectRatchetNotificationUsesWorkflowProjection(t *testing.T) {
 	if err != nil {
 		t.Fatalf("parse event: %v", err)
 	}
-	input, err := ProjectRatchetNotificationToMessagingSend(event, "triage")
+	input, err := ProjectNotificationEventToMessagingSend(event, "triage")
 	if err != nil {
 		t.Fatalf("project event: %v", err)
 	}
@@ -86,23 +86,23 @@ func TestProjectRatchetNotificationUsesWorkflowProjection(t *testing.T) {
 	}
 }
 
-func TestProjectRatchetNotificationRejectsMissingChannel(t *testing.T) {
-	event := RatchetNotificationEvent{Messaging: RatchetMessagingRecord{Text: "ready"}}
-	if _, err := ProjectRatchetNotificationToMessagingSend(event, " "); err == nil {
+func TestProjectNotificationRejectsMissingChannel(t *testing.T) {
+	event := NotificationEvent{Messaging: NotificationMessaging{Text: "ready"}}
+	if _, err := ProjectNotificationEventToMessagingSend(event, " "); err == nil {
 		t.Fatal("expected missing channel error")
 	}
 }
 
-func TestProjectRatchetNotificationIgnoresForeignWorkflowProjection(t *testing.T) {
-	event := RatchetNotificationEvent{
-		Messaging: RatchetMessagingRecord{Text: "fallback"},
-		Workflow: &RatchetWorkflowProjection{
+func TestProjectNotificationIgnoresForeignWorkflowProjection(t *testing.T) {
+	event := NotificationEvent{
+		Messaging: NotificationMessaging{Text: "fallback"},
+		Workflow: &NotificationWorkflow{
 			StepType:     StepTypeMessagingSend,
 			PluginFamily: "other-plugin",
-			Input:        RatchetWorkflowInput{Text: "foreign text"},
+			Input:        NotificationWorkflowInput{Text: "foreign text"},
 		},
 	}
-	input, err := ProjectRatchetNotificationToMessagingSend(event, "ops")
+	input, err := ProjectNotificationEventToMessagingSend(event, "ops")
 	if err != nil {
 		t.Fatalf("project event: %v", err)
 	}
@@ -111,8 +111,8 @@ func TestProjectRatchetNotificationIgnoresForeignWorkflowProjection(t *testing.T
 	}
 }
 
-func TestProjectRatchetNotificationRejectsMissingText(t *testing.T) {
-	_, err := ProjectRatchetNotificationToMessagingSend(RatchetNotificationEvent{}, "ops")
+func TestProjectNotificationRejectsMissingText(t *testing.T) {
+	_, err := ProjectNotificationEventToMessagingSend(NotificationEvent{}, "ops")
 	if err == nil {
 		t.Fatal("expected missing messaging text error")
 	}
